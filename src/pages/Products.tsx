@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Plus, Search, Edit2, Trash2, Package, ImageIcon } from "lucide-react";
+import { StockIndicator } from "@/components/StockIndicator";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { PageHeader } from "@/components/ui/page-header";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -529,9 +530,10 @@ export default function Products() {
                   <p className="font-bold text-primary">
                     {formatCurrency(product.prix_unitaire)}
                   </p>
-                  <Badge variant={getTotalStock(product) > 5 ? "secondary" : "destructive"}>
-                    Stock: {getTotalStock(product)}
-                  </Badge>
+                  <div className="flex items-center gap-2">
+                    <StockIndicator totalStock={getTotalStock(product)} size="sm" />
+                    <span className="text-xs text-muted-foreground">{getTotalStock(product)}</span>
+                  </div>
                 </div>
               </CardContent>
             </Card>

@@ -9,7 +9,7 @@ import { AuthProvider, useAuth } from "@/hooks/useAuth";
 import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
 import Products from "./pages/Products";
-import PlanTravail from "./pages/PlanTravail";
+import ListeVentes from "./pages/ListeVentes";
 import Ventes from "./pages/Ventes";
 import Rapports from "./pages/Rapports";
 import Parametres from "./pages/Parametres";
@@ -88,7 +88,7 @@ function AppRoutes() {
       {/* Protected routes */}
       <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
       <Route path="/produits" element={<ProtectedRoute><Products /></ProtectedRoute>} />
-      <Route path="/plan-travail" element={<ProtectedRoute><PlanTravail /></ProtectedRoute>} />
+      <Route path="/liste-ventes" element={<ProprietaireRoute><ListeVentes /></ProprietaireRoute>} />
       <Route path="/ventes" element={<ProtectedRoute><Ventes /></ProtectedRoute>} />
       <Route path="/rapports" element={<ProtectedRoute><Rapports /></ProtectedRoute>} />
       <Route path="/parametres" element={<ProtectedRoute><Parametres /></ProtectedRoute>} />

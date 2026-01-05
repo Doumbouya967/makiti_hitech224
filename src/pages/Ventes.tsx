@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Plus, ShoppingCart, Minus, Trash2, CreditCard } from "lucide-react";
+import { StockIndicator } from "@/components/StockIndicator";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { PageHeader } from "@/components/ui/page-header";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -307,33 +308,39 @@ export default function Ventes() {
                 />
               ) : (
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-                  {products.map((product) => (
-                    <div
-                      key={product.id}
-                      className="border rounded-lg p-3 hover:border-primary transition-colors"
-                    >
-                      <p className="font-mono text-xs text-muted-foreground">
-                        {product.code_modele}
-                      </p>
-                      <p className="font-medium truncate">{product.nom}</p>
-                      <p className="text-primary font-bold text-sm mb-2">
-                        {formatCurrency(product.prix_unitaire)}
-                      </p>
-                      <div className="flex flex-wrap gap-1">
-                        {availableSizes(product).map((taille) => (
-                          <Button
-                            key={taille}
-                            size="sm"
-                            variant="outline"
-                            className="h-7 px-2 text-xs"
-                            onClick={() => addToCart(product, taille)}
-                          >
-                            {taille}
-                          </Button>
-                        ))}
+                  {products.map((product) => {
+                    const totalStock = product.stock.reduce((sum, s) => sum + s.quantite_actuelle, 0);
+                    return (
+                      <div
+                        key={product.id}
+                        className="border rounded-lg p-3 hover:border-primary transition-colors"
+                      >
+                        <div className="flex items-center justify-between mb-1">
+                          <p className="font-mono text-xs text-muted-foreground">
+                            {product.code_modele}
+                          </p>
+                          <StockIndicator totalStock={totalStock} size="sm" />
+                        </div>
+                        <p className="font-medium truncate">{product.nom}</p>
+                        <p className="text-primary font-bold text-sm mb-2">
+                          {formatCurrency(product.prix_unitaire)}
+                        </p>
+                        <div className="flex flex-wrap gap-1">
+                          {availableSizes(product).map((taille) => (
+                            <Button
+                              key={taille}
+                              size="sm"
+                              variant="outline"
+                              className="h-7 px-2 text-xs"
+                              onClick={() => addToCart(product, taille)}
+                            >
+                              {taille}
+                            </Button>
+                          ))}
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               )}
             </CardContent>
