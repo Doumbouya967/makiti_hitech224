@@ -13,7 +13,8 @@ import {
   Wifi,
   WifiOff,
   RefreshCw,
-  User
+  User,
+  Users
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
@@ -25,13 +26,17 @@ interface AppLayoutProps {
   children: ReactNode;
 }
 
-const menuItems = [
+const baseMenuItems = [
   { path: "/dashboard", label: "Tableau de bord", icon: LayoutDashboard },
   { path: "/plan-travail", label: "Plan de travail", icon: ClipboardList },
   { path: "/ventes", label: "Ventes", icon: ShoppingCart },
   { path: "/produits", label: "Produits", icon: Package },
   { path: "/rapports", label: "Rapports", icon: BarChart3 },
   { path: "/parametres", label: "Paramètres", icon: Settings },
+];
+
+const proprietaireMenuItems = [
+  { path: "/utilisateurs", label: "Utilisateurs", icon: Users },
 ];
 
 export function AppLayout({ children }: AppLayoutProps) {
@@ -41,6 +46,11 @@ export function AppLayout({ children }: AppLayoutProps) {
   const location = useLocation();
   const navigate = useNavigate();
   const { profile, userRole, signOut } = useAuth();
+
+  // Build menu items based on role
+  const menuItems = userRole === 'proprietaire' 
+    ? [...baseMenuItems, ...proprietaireMenuItems]
+    : baseMenuItems;
 
   // Monitor online status
   useState(() => {
