@@ -28,7 +28,6 @@ interface AppLayoutProps {
 
 const baseMenuItems = [
   { path: "/dashboard", label: "Tableau de bord", icon: LayoutDashboard },
-  { path: "/plan-travail", label: "Plan de travail", icon: ClipboardList },
   { path: "/ventes", label: "Ventes", icon: ShoppingCart },
   { path: "/produits", label: "Produits", icon: Package },
   { path: "/rapports", label: "Rapports", icon: BarChart3 },
@@ -36,6 +35,7 @@ const baseMenuItems = [
 ];
 
 const proprietaireMenuItems = [
+  { path: "/liste-ventes", label: "Liste des Ventes", icon: ClipboardList },
   { path: "/utilisateurs", label: "Utilisateurs", icon: Users },
 ];
 
