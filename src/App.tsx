@@ -13,6 +13,7 @@ import PlanTravail from "./pages/PlanTravail";
 import Ventes from "./pages/Ventes";
 import Rapports from "./pages/Rapports";
 import Parametres from "./pages/Parametres";
+import Utilisateurs from "./pages/Utilisateurs";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -31,6 +32,29 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
 
   if (!user) {
     return <Navigate to="/auth" replace />;
+  }
+
+  return <>{children}</>;
+}
+
+// Proprietaire-only route wrapper
+function ProprietaireRoute({ children }: { children: React.ReactNode }) {
+  const { user, userRole, loading } = useAuth();
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return <Navigate to="/auth" replace />;
+  }
+
+  if (userRole !== 'proprietaire') {
+    return <Navigate to="/dashboard" replace />;
   }
 
   return <>{children}</>;
@@ -68,6 +92,9 @@ function AppRoutes() {
       <Route path="/ventes" element={<ProtectedRoute><Ventes /></ProtectedRoute>} />
       <Route path="/rapports" element={<ProtectedRoute><Rapports /></ProtectedRoute>} />
       <Route path="/parametres" element={<ProtectedRoute><Parametres /></ProtectedRoute>} />
+      
+      {/* Proprietaire-only routes */}
+      <Route path="/utilisateurs" element={<ProprietaireRoute><Utilisateurs /></ProprietaireRoute>} />
       
       {/* Redirects */}
       <Route path="/" element={<Navigate to="/dashboard" replace />} />
