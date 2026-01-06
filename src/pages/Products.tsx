@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Plus, Search, Edit2, Trash2, Package, ImageIcon } from "lucide-react";
 import { StockIndicator } from "@/components/StockIndicator";
+import { generatePrefix } from "@/components/CategoryManager";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { PageHeader } from "@/components/ui/page-header";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -113,6 +114,42 @@ export default function Products() {
   const loadCategories = async () => {
     const { data } = await supabase.from("categories").select("*").order("nom");
     setCategories(data || []);
+  };
+
+  // Génère le prochain code modèle basé sur la catégorie
+  const generateNextModelCode = async (categoryId: string) => {
+    const category = categories.find((c) => c.id === categoryId);
+    if (!category) return "";
+
+    const prefix = generatePrefix(category.nom);
+
+    // Trouve le plus grand numéro existant pour ce préfixe
+    const { data: existingProducts } = await supabase
+      .from("products")
+      .select("code_modele")
+      .ilike("code_modele", `${prefix}-%`);
+
+    let maxNumber = 0;
+    existingProducts?.forEach((p) => {
+      const match = p.code_modele.match(new RegExp(`^${prefix}-(\\d+)$`, "i"));
+      if (match) {
+        const num = parseInt(match[1]);
+        if (num > maxNumber) maxNumber = num;
+      }
+    });
+
+    const nextNumber = (maxNumber + 1).toString().padStart(3, "0");
+    return `${prefix}-${nextNumber}`;
+  };
+
+  const handleCategoryChange = async (categoryId: string) => {
+    setFormData({ ...formData, categorie_id: categoryId });
+    
+    // Génère le code modèle auto seulement pour les nouveaux produits
+    if (!editingProduct) {
+      const newCode = await generateNextModelCode(categoryId);
+      setFormData((prev) => ({ ...prev, categorie_id: categoryId, code_modele: newCode }));
+    }
   };
 
   const resetForm = () => {
@@ -332,12 +369,12 @@ export default function Products() {
                     <Label htmlFor="code_modele">Code modèle *</Label>
                     <Input
                       id="code_modele"
-                      placeholder="CF01"
+                      placeholder="Sélectionner une catégorie..."
                       value={formData.code_modele}
-                      onChange={(e) =>
-                        setFormData({ ...formData, code_modele: e.target.value.toUpperCase() })
-                      }
+                      disabled
+                      className="bg-muted"
                     />
+                    <p className="text-xs text-muted-foreground">Généré automatiquement</p>
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="nom">Nom du produit *</Label>
@@ -355,7 +392,7 @@ export default function Products() {
                     <Label htmlFor="categorie">Catégorie</Label>
                     <Select
                       value={formData.categorie_id}
-                      onValueChange={(value) => setFormData({ ...formData, categorie_id: value })}
+                      onValueChange={handleCategoryChange}
                     >
                       <SelectTrigger>
                         <SelectValue placeholder="Sélectionner..." />
@@ -460,8 +497,8 @@ export default function Products() {
 
       {/* Products Grid */}
       {loading ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-          {[1, 2, 3, 4].map((i) => (
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
+        {[1, 2, 3, 4, 5].map((i) => (
             <Card key={i} className="animate-pulse">
               <div className="h-40 bg-muted rounded-t-lg" />
               <CardContent className="p-4 space-y-2">
@@ -484,7 +521,7 @@ export default function Products() {
           }
         />
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
           {filteredProducts.map((product) => (
             <Card key={product.id} className="shadow-card overflow-hidden group">
               <div className="aspect-square bg-muted relative">

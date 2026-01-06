@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Moon, Sun, User, Lock, Bell, Database, Info } from "lucide-react";
+import { Moon, Sun, User, Database, Info } from "lucide-react";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { PageHeader } from "@/components/ui/page-header";
 import { Button } from "@/components/ui/button";
@@ -12,6 +12,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { APP_NAME, CURRENCY } from "@/lib/constants";
+import { CategoryManager } from "@/components/CategoryManager";
 
 export default function Parametres() {
   const { profile, userRole, user } = useAuth();
@@ -209,6 +210,9 @@ export default function Parametres() {
             </div>
           </CardContent>
         </Card>
+
+        {/* Category Management (Owner only) */}
+        {userRole === "proprietaire" && <CategoryManager />}
 
         {/* Data Management (Owner only) */}
         {userRole === "proprietaire" && (
