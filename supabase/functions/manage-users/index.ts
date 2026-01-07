@@ -70,7 +70,8 @@ Deno.serve(async (req) => {
     // Create Supabase client with service role for admin operations
     const supabaseAdmin = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
+      // Allow either SUPABASE_SERVICE_ROLE_KEY (dashboard) or SERVICE_ROLE_KEY (CLI)
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? Deno.env.get('SERVICE_ROLE_KEY') ?? '',
       {
         auth: {
           autoRefreshToken: false,
